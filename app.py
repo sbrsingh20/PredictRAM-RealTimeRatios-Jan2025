@@ -37,11 +37,8 @@ risk_params = [
     'R-Squared (Minute)', 'Downside Deviation (Minute)', 'Tracking Error (%) (Minute)', 'VaR (95%) (Minute)'
 ]
 
-# Create an empty dictionary to store figures
-figures = {param: None for param in risk_params}
-
-# Loop to update the graphs every minute
-while True:
+# Define a function to update the graphs
+def update_metrics():
     # Fetch real-time stock data (1-minute interval)
     stock_data = fetch_stock_data(stock_symbol)
 
@@ -55,6 +52,7 @@ while True:
     current_values = {param: stock_metrics[param] for param in risk_params}
 
     # Create continuous charts for each risk parameter
+    figures = {}
     for param in risk_params:
         # Add the current time and value to the stored data
         stored_data[param]['time'].append(current_time)
@@ -84,10 +82,16 @@ while True:
 
         # Store the figure
         figures[param] = fig
+    
+    return figures
 
-    # Clear previous plots and display new ones
-    for param in risk_params:
-        st.plotly_chart(figures[param])
+# Display loading spinner while updating
+with st.spinner('Loading stock metrics...'):
+    figures = update_metrics()
+    
+# Display each figure
+for param in risk_params:
+    st.plotly_chart(figures[param])
 
-    # Wait for a minute before updating again
-    time.sleep(60)  # 60 seconds delay for next iteration
+# Wait for 60 seconds before updating again (use time.sleep in the loop only if needed)
+st.time.sleep(60)  # 60 seconds delay for the next iteration
