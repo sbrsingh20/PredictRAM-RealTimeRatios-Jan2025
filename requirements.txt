@@ -1,4 +1,6 @@
 plotly
 streamlit
-oandas
+pandas
 openpyxl
+yfinance
+dash
